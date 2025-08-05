@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Calendar</h2>
+<div id="calendar"></div>
+
+<!-- Reminder Modal -->
+<div id="reminderModal" style="display: none; position: fixed; background: #fff; padding: 20px; border: 1px solid #ccc;">
+    <form id="reminderForm" method="POST" action="{% url 'add_reminder' %}">
+        {% csrf_token %}
+        <input type="hidden" name="date" id="reminderDate">
+        <label for="message">Reminder:</label>
+        <input type="text" name="message" required>
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeModal()">Cancel</button>
+    </form>
+</div>
+
+<style>
+    #calendar td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+
+    #reminderModal {
+        top: 20%;
+        left: 35%;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+</style>
+
+<script>
+function closeModal() {
+    document.getElementById("reminderModal").style.display = "none";
+}
+
+function openReminderModal(date) {
+    document.getElementById("reminderDate").value = date;
+    document.getElementById("reminderModal").style.display = "block";
+}
+
+function generateCalendar(year, month) {
+    const calendar = document.getElementById("calendar");
+    calendar.innerHTML = "";
+
+    const date = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    let html = `<table><thead><tr>`;
+    const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    weekdays.forEach(day => html += `<th>${day}</th>`);
+    html += `</tr></thead><tbody><tr>`;
+
+    // Empty cells before 1st of month
+    for (let i = 0; i < date.getDay(); i++) {
+        html += "<td></td>";
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const currentDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        html += `<td onclick="openReminderModal('${currentDate}')">${day}</td>`;
+        date.setDate(date.getDate() + 1);
+        if (date.getDay() === 0 && day !== daysInMonth) {
+            html += "</tr><tr>";
+        }
+    }
+
+    html += "</tr></tbody></table>";
+    calendar.innerHTML = html;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const today = new Date();
+    generateCalendar(today.getFullYear(), today.getMonth() + 1);
+});
+</script>
+{% endblock %}

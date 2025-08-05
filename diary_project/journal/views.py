@@ -1,43 +1,46 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import JournalEntryForm, UserRegisterForm
-from .models import JournalEntry
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.db.models import Q
 from django.core.paginator import Paginator
-
 from datetime import datetime
+
+from .forms import (
+    JournalEntryForm, UserRegisterForm, UserUpdateForm,
+    ProfileUpdateForm, ReminderForm
+)
+from .models import JournalEntry, Profile, Reminder
+
 
 @login_required
 def home(request):
     query = request.GET.get('q', '').strip()
     entries = JournalEntry.objects.filter(user=request.user).order_by('date_created')
+    total_entries = entries.count()
 
+    reminders = Reminder.objects.filter(user=request.user).order_by('date')
     result_message = None
 
     if query:
-        # Check if query is a valid page number
         try:
             page_num = int(query)
             if page_num > 0 and page_num <= entries.count():
-                # Get that single entry
-                selected_entry = entries[page_num - 1]  # 0-based index
+                selected_entry = entries[page_num - 1]
                 entries = [selected_entry]
                 result_message = f'Showing page {page_num} of your journal'
             else:
                 result_message = f'No entry found at page {page_num}.'
                 entries = []
         except ValueError:
-            # Not a page number, try as text or date
             try:
                 parsed_date = datetime.strptime(query, "%Y-%m-%d").date()
                 entries = entries.filter(
                     Q(title__icontains=query) |
                     Q(content__icontains=query) |
-                    Q(date_created__date=parsed_date)
+                    Q(date_created__startswith=parsed_date.isoformat())
+
                 )
             except ValueError:
-                # Not a date either — fallback to text search
                 entries = entries.filter(
                     Q(title__icontains=query) |
                     Q(content__icontains=query)
@@ -47,46 +50,22 @@ def home(request):
     paginator = Paginator(entries, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    start_index = page_obj.start_index()
+    for idx, entry in enumerate(page_obj.object_list, start=start_index):
+        entry.page_number = idx
+    # ✅ NEW: Get reminder dates as strings like '2025-08-05'
+    reminder_dates = [r.date.strftime('%Y-%m-%d') for r in reminders]
 
     return render(request, 'journal/home.html', {
         'page_obj': page_obj,
         'query': query,
         'result_message': result_message,
+        'reminders': reminders,
+        'reminder_dates': reminder_dates,
+        'total_entries': total_entries,# ✅ Pass to template
     })
 
-# --------------------
-# Home view (with search + pagination + ordering)
-# --------------------
 
-'''
-#HI
-@login_required
-def home(request):
-    query = request.GET.get('q', '')
-    entries = JournalEntry.objects.filter(user=request.user)
-
-    if query:
-        entries = entries.filter(
-            Q(title__icontains=query) |
-            Q(content__icontains=query) |
-            Q(date_created__icontains=query)
-        )
-
-    entries = entries.order_by('date_created')  # oldest first
-
-    paginator = Paginator(entries, 10)  # 10 entries per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'journal/home.html', {
-        'page_obj': page_obj,
-        'query': query,
-    })'''
-
-
-# --------------------
-# Add Entry view
-# --------------------
 @login_required
 def add_entry(request):
     if request.method == 'POST':
@@ -101,9 +80,6 @@ def add_entry(request):
     return render(request, 'journal/add_entry.html', {'form': form})
 
 
-# --------------------
-# Register view
-# --------------------
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -116,13 +92,8 @@ def register(request):
     return render(request, 'journal/register.html', {'form': form})
 
 
-# --------------------
-# Entry Detail view (with accurate page number)
-# --------------------
-
 @login_required
 def entry_detail(request, entry_id):
-    # Order by date_created ASC to match home page
     entries = list(JournalEntry.objects.filter(user=request.user).order_by('date_created'))
     entry = get_object_or_404(JournalEntry, pk=entry_id, user=request.user)
 
@@ -131,9 +102,7 @@ def entry_detail(request, entry_id):
     except ValueError:
         current_index = 0
 
-    # 👇 Page number is entry's position in list (1-based)
     page_number = current_index + 1
-
     previous_entry = entries[current_index - 1] if current_index > 0 else None
     next_entry = entries[current_index + 1] if current_index < len(entries) - 1 else None
 
@@ -144,3 +113,48 @@ def entry_detail(request, entry_id):
         'next_entry': next_entry
     })
 
+
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+    return render(request, 'journal/profile.html', {
+        'u_form': u_form,
+        'p_form': p_form
+    })
+
+
+@login_required
+def calendar_view(request):
+    return render(request, 'journal/calendar.html')
+
+
+
+@login_required
+def add_reminder(request):
+    if request.method == 'POST':
+        form = ReminderForm(request.POST)
+        if form.is_valid():
+            reminder = form.save(commit=False)
+            reminder.user = request.user
+            reminder.save()
+    return redirect('home')
+
+
+
+@login_required
+def delete_reminder(request, reminder_id):
+    reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
+    if request.method == 'POST':
+        reminder.delete()
+        return redirect('home')
+    return render(request, 'journal/delete_reminder.html', {'reminder': reminder})

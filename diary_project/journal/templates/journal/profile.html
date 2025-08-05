@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Indie+Flower&family=Nanum+Pen+Script&family=Caveat&family=Dancing+Script&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Agbalumo', cursive;
+            background: #f5e9d4 url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 15px;
+        }
+
+        .profile-container {
+            background: #fcf7e8;
+            padding: 30px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            border: 2px solid #d3c2a3;
+        }
+
+        h2 {
+            text-align: center;
+            color: #3e2f1c;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        img.profile-pic {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 20px;
+            border: 2px solid #b88c65;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #4d3a28;
+            margin: 10px 0;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #bca98f;
+            background: #fffaf3;
+            font-family: inherit;
+        }
+
+        label {
+            color: #5b4636;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #6c4f3d;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background-color: #8b6a4b;
+        }
+
+        .back-button {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #b88c65;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #8b6a4b;
+        }
+
+        #edit-mode button {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>
+            <div style="margin-top: 10px;">My Profile</div>
+            {% if request.user.profile.profile_picture %}
+                <img src="{{ request.user.profile.profile_picture.url }}" class="profile-pic" alt="Profile Picture">
+            {% endif %}
+
+        </h2>
+
+        <form method="POST" enctype="multipart/form-data" id="profile-form">
+            {% csrf_token %}
+
+            <div id="view-mode">
+                <p><strong>Username:</strong> {{ request.user.username }}</p>
+                <p><strong>Name:</strong> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+                <p><strong>Email:</strong> {{ request.user.email }}</p>
+                <p><strong>Phone:</strong> {{ request.user.profile.phone }}</p>
+                <button type="button" onclick="toggleEdit(true)">✏️ Edit</button>
+            </div>
+
+            <div id="edit-mode" style="display: none;">
+                {{ u_form.as_p }}
+                {{ p_form.as_p }}
+                <button type="submit">✅ Save Changes</button>
+                <button type="button" onclick="toggleEdit(false)">❌ Cancel</button>
+            </div>
+        </form>
+
+        <a href="{% url 'home' %}" class="back-button">← Back to Home</a>
+    </div>
+
+    <script>
+        function toggleEdit(showEdit) {
+            document.getElementById("view-mode").style.display = showEdit ? "none" : "block";
+            document.getElementById("edit-mode").style.display = showEdit ? "block" : "none";
+        }
+    </script>
+</body>
+</html>

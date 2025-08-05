@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Indie+Flower&family=Nanum+Pen+Script&family=Caveat&family=Dancing+Script&family=Shadows+Into+Light&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Special Elite', cursive;
+            font-family: 'Agbalumo', cursive;
             background: #f5e9d4 url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             padding: 40px;
         }
@@ -139,6 +139,7 @@
     <div class="font-select">
         <label for="font-select">🖋️ Choose Font Style:</label>
         <select id="font-select" onchange="changeFont(this.value)">
+            <option value="'Agbalumo', cursive">Default</option>
             <option value="'Special Elite', cursive">Vintage (Default)</option>
             <option value="'Indie Flower', cursive">Indie Flower</option>
             <option value="'Nanum Pen Script', cursive">Nanum Pen Script</option>
@@ -152,7 +153,11 @@
 
     <div class="notebook flip">
         <div class="title">{{ entry.title }}</div>
-       <div class="date">Written on {{ entry.date_created|friendly_datetime }}</div>
+       {% load tz %}
+{% timezone "Asia/Kolkata" %}
+    <div class="date">Written on {{ entry.date_created|date:"F j \\a\\t  g:i A" }}</div>
+{% endtimezone %}
+
         <div class="content">{{ entry.content }}</div>
         <div class="page-number">Page {{ page_number }}</div>
     </div>

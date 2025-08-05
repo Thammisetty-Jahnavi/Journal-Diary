@@ -1,7 +1,8 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Your Journal</title>
+    <title>Vintage Journal</title>
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Indie+Flower&family=Nanum+Pen+Script&family=Caveat&family=Dancing+Script&family=Shadows+Into+Light&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,57 +12,122 @@
         body {
             font-family: var(--selected-font);
             background: #f5e9d4 url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            padding: 40px;
-        }
-
-        h2 {
-            color: #3e2f1c;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2em;
+            margin: 0;
+            padding: 0;
         }
 
         .top-bar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            background-color: #6c4f3d;
+            padding: 12px 20px;
+            color: white;
+            position: relative;
         }
 
-        a.button {
+        .menu-dropdown {
+            position: relative;
+        }
+
+        .menu-dropdown button {
+            background-color: transparent;
+            color: white;
+            font-size: 16px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 220px;
+            top: 100%;
+            left: 0;
+            z-index: 1;
+            border-radius: 5px;
+            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+        }
+
+        .menu-dropdown:hover .menu-dropdown-content {
+            display: block;
+        }
+
+        .menu-dropdown-content a,
+        .menu-dropdown-content button,
+        .menu-dropdown-content form {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            text-align: left;
+            border: none;
+            background: white;
+            color: #3e2f1c;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .menu-dropdown-content a:hover,
+        .menu-dropdown-content button:hover {
+            background-color: #f2e6d9;
+        }
+
+        .submenu {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background-color: #fef8e7;
+            color: #333;
+            font-family: 'Georgia', serif;
+            border-radius: 6px;
+        }
+
+        .submenu ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .submenu ul li {
+            padding: 5px 0;
+            color: #333;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .heading-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.6em;
+        }
+
+        .add-entry-button {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0 10px;
+        }
+
+        .add-entry-button a {
             background-color: #6c4f3d;
             color: white;
             padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: bold;
-        }
-
-        form.logout-form button {
-            background: none;
-            border: none;
-            color: #6c4f3d;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .font-selector {
-            font-size: 0.9em;
-            margin-left: 20px;
+            text-decoration: none;
         }
 
         .search-box {
             text-align: center;
-            margin: 20px 0 30px 0;
+            margin-bottom: 30px;
         }
 
-        .search-box input[type="text"] {
+        .search-box input {
             padding: 8px;
             width: 300px;
-            border-radius: 6px;
             border: 1px solid #a1896f;
-            background: #fffaf3;
+            border-radius: 6px;
             font-family: inherit;
         }
 
@@ -72,17 +138,12 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-family: inherit;
-        }
-
-        .search-box a {
-            color: #3e2f1c;
-            margin-left: 10px;
         }
 
         .entry-list {
             max-width: 700px;
             margin: auto;
+            padding: 0 20px;
         }
 
         .entry-item {
@@ -109,8 +170,7 @@
 
         .pagination {
             text-align: center;
-            margin-top: 40px;
-            font-size: 1.1em;
+            margin: 40px 0;
         }
 
         .pagination a {
@@ -120,40 +180,153 @@
             font-weight: bold;
         }
 
-        .pagination span {
-            color: #3e2f1c;
+        .reminder-form input[type="text"] {
+            padding: 8px;
+            width: 150px;
+            margin-right: 10px;
+        }
+
+        .reminder-form button {
+            width: 150px;
+            padding: 6px 10px;
+            font-size: 13px;
+            background-color: #6c4f3d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            margin-left: 10px;
+            font-size: 0.9em;
+            background-color: transparent;
+            border: none;
+            color: red;
+            cursor: pointer;
+        }
+
+        .submenu ul li span {
+            display: inline-block;
+            max-width: 240px;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+.date {
+            color: #6e5e48;
+            font-size: 0.95em;
+            margin-bottom: 25px;
+        }
+
+.page-number {
+            text-align: right;
+            color: #a1896f;
+            margin-top: 30px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
+<!-- Body content remains unchanged for now -->
+</body>
+</html>
 
-    <div class="top-bar">
-        <div>
-            <a href="{% url 'add_entry' %}" class="button">✍️ Add New Entry</a>
-        </div>
-        <div style="display: flex; align-items: center;">
-            <label for="fontStyle" style="margin-right: 5px; color: #3e2f1c;">Font:</label>
-            <select id="fontStyle" class="font-selector">
-                <option value="'Special Elite', cursive">Vintage (Default)</option>
-                <option value="'Indie Flower', cursive">Indie Flower</option>
-                <option value="'Nanum Pen Script', cursive">Nanum Pen Script</option>
-                <option value="'Caveat', cursive">Caveat</option>
-                <option value="'Dancing Script', cursive">Dancing Script</option>
-                <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
-            </select>
-            <form method="post" action="{% url 'logout' %}" class="logout-form" style="margin-left: 20px;">
+<body>
+{% load tz %}
+
+<div class="top-bar">
+    <div class="menu-dropdown">
+        <button>☰ Menu</button>
+        <div class="menu-dropdown-content">
+            <a href="{% url 'profile' %}">
+                {% if request.user.profile.profile_picture %}
+                    <img src="{{ request.user.profile.profile_picture.url }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                {% endif %}
+                {{ request.user.username }}
+            </a>
+            <a href="{% url 'login' %}">➕ Add Account</a>
+            <a href="{% url 'home' %}">🏠 Home</a>
+
+            <!-- Calendar -->
+            <!-- Inside Calendar submenu -->
+<button onclick="toggleOnly('calendarSubmenu')">📅 Calendar</button>
+<div id="calendarSubmenu" class="submenu hidden">
+    <input type="date" id="reminderDate" onchange="showReminderForm(this.value)">
+
+
+
+    <!-- This is the ONLY reminderForm now -->
+    <div class="reminder-form hidden" id="reminderForm">
+        <form method="post" action="{% url 'add_reminder' %}">
+            {% csrf_token %}
+            <input type="hidden" name="date" id="selectedReminderDate">
+            <input type="text" name="message" placeholder="Reminder message..." required>
+            <button type="submit" >
+    Add Reminder
+</button>
+
+        </form>
+    </div>
+</div>
+<!-- Reminders -->
+            <button onclick="toggleOnly('remindersSubmenu')">📝 Reminders</button>
+
+<div id="remindersSubmenu" class="submenu" style="max-width: 300px; word-wrap: break-word; overflow-wrap: break-word;">
+
+    <ul style="list-style: none; padding-left: 0;">
+        {% for reminder in reminders %}
+            <li style="color: black; margin-bottom: 10px; word-wrap: break-word;">
+                <strong style="color: black;">{{ reminder.date|date:"M d, Y" }}</strong>:
+                <span style="display: inline-block; max-width: 250px; word-wrap: break-word;">
+                    {{ reminder.message }}
+                </span>
+                <form action="{% url 'delete_reminder' reminder.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete" style="color: darkred; background: none; border: none; cursor: pointer;">
+                        🗑️ Delete
+                    </button>
+                </form>
+            </li>
+        {% empty %}
+            <li style="color: black;">No reminders yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+
+
+            <!-- Change Font -->
+            <button onclick="toggleOnly('fontSubmenu')">🖋 Change Font</button>
+            <div id="fontSubmenu" class="submenu">
+                <label for="fontStyle">Choose Font:</label>
+                <select id="fontStyle">
+                    <option value="'Agbalumo', cursive">Default</option>
+                    <option value="'Special Elite', cursive">Special Elite</option>
+                    <option value="'Indie Flower', cursive">Indie Flower</option>
+                    <option value="'Nanum Pen Script', cursive">Nanum Pen Script</option>
+                    <option value="'Caveat', cursive">Caveat</option>
+                    <option value="'Dancing Script', cursive">Dancing Script</option>
+                    <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
+                </select>
+            </div>
+
+            <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit">Logout</button>
+                <button type="submit">🚪 Logout</button>
             </form>
         </div>
     </div>
+    <h3 class="heading-center">📖 Vintage Journal</h3>
+</div>
 
-    <h2>📖 Your Vintage Journal</h2>
+<div class="add-entry-button">
+    <a href="{% url 'add_entry' %}">✍️ Add New Entry</a>
+</div>
 
-
-    <div class="search-box">
+<div class="search-box">
     <form method="get">
-        <input type="text" name="q" placeholder="🔍Search by title, date (YYYY-MM-DD), or page number" value="{{ query|default:'' }}">
+        <input type="text" name="q" placeholder="🔍 Search title, date (YYYY-MM-DD), or page" value="{{ query|default:'' }}">
         <button type="submit">Search</button>
         {% if query %}
             <a href="{% url 'home' %}">Clear</a>
@@ -163,43 +336,75 @@
         <p>{{ result_message }}</p>
     {% endif %}
 </div>
-
+<p style="font-style: italic; color:  #3e2f1c; font-size: 1.2em;  text-align: center">
+  📓 You have written <strong>{{ total_entries }}</strong> journal entries so far.
+</p>
 
 <div class="entry-list">
     {% for entry in page_obj %}
         <div class="entry-item">
             <a href="{% url 'entry_detail' entry.id %}">{{ entry.title }}</a>
-            <small>{{ entry.date_created|date:"F j, Y, g:i A" }}</small>
+            {% timezone "Asia/Kolkata" %}
+    <div class="date">Written on {{ entry.date_created|date:"F j \\a\\t g:i A" }}</div>
+{% endtimezone %}
+
+<div class="page-number">Page {{ entry.page_number }}</div>
         </div>
     {% empty %}
-        <p>No entries found. <a href="{% url 'add_entry' %}">Add your first entry</a>!</p>
+        <p style="text-align: center;">No entries found. <a href="{% url 'add_entry' %}">Add your first entry</a>!</p>
     {% endfor %}
 </div>
 
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">← Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next →</a>
+    {% endif %}
+</div>
 
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">← Previous</a>
-        {% endif %}
-        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next →</a>
-        {% endif %}
-    </div>
-
-    <script>
-        const selectFont = document.getElementById('fontStyle');
-        const savedFont = localStorage.getItem('selectedFont');
-        if (savedFont) {
-            document.documentElement.style.setProperty('--selected-font', savedFont);
-            selectFont.value = savedFont;
-        }
-
-        selectFont.addEventListener('change', function () {
-            const font = this.value;
-            document.documentElement.style.setProperty('--selected-font', font);
-            localStorage.setItem('selectedFont', font);
+<script>
+    function toggleOnly(id) {
+        const all = ['calendarSubmenu', 'remindersSubmenu', 'fontSubmenu'];
+        all.forEach(section => {
+            if (section === id) {
+                document.getElementById(section).classList.toggle('hidden');
+            } else {
+                document.getElementById(section).classList.add('hidden');
+            }
         });
-    </script>
+
+        // Hide the reminder form unless it's calendar
+        if (id !== 'calendarSubmenu') {
+            document.getElementById('reminderForm').classList.add('hidden');
+        }
+    }
+
+    function showReminderForm(dateValue) {
+        const reminderForm = document.getElementById("reminderForm");
+        document.getElementById("selectedReminderDate").value = dateValue;
+        reminderForm.classList.remove("hidden");
+        reminderForm.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    const fontSelect = document.getElementById('fontStyle');
+    const savedFont = localStorage.getItem('selectedFont');
+    if (savedFont) {
+        document.documentElement.style.setProperty('--selected-font', savedFont);
+        fontSelect.value = savedFont;
+    }
+
+    fontSelect.addEventListener('change', function () {
+        const font = this.value;
+        document.documentElement.style.setProperty('--selected-font', font);
+        localStorage.setItem('selectedFont', font);
+    });
+
+
+
+</script>
+
 </body>
 </html>
