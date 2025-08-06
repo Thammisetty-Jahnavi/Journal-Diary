@@ -14,8 +14,8 @@ Journal Diary is a clean and simple digital journal web application designed for
 📲 Clean UI/UX – Built with simplicity and ease of use in mind.
 
 ## 📌 Built With
-Frontend: HTML, CSS, JavaScript (or React if applicable)
-Backend: Django (or Node.js, Flask, etc., if you're using another stack)
+Frontend: HTML, CSS, JavaScript 
+Backend: Django 
 Design: Figma prototypes
 Version Control: Git & GitHub
 
