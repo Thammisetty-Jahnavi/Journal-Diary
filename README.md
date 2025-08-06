@@ -7,12 +7,12 @@ A short one‑line description of your project.
 ## Screenshots
 | Screen | Description |
 |--------|-------------|
-| ![Add Journal](Screenshots/addjournal.JPG) | Add a new journal entry |
-| ![Search](Screenshots/search.JPG)           | Search through journal entries |
 | ![Login](Screenshots/login.JPG)             | User login screen |
-| ![Menu](Screenshots/menu.png)               | Main navigation menu |
 | ![Register](Screenshots/register.JPG)       | User registration page |
 | ![Dashboard](Screenshots/dashboard.JPG)     | User's main dashboard view |
+| ![Menu](Screenshots/menu.png)               | Main navigation menu |
+| ![Add Journal](Screenshots/addjournal.JPG) | Add a new journal entry |
+| ![Search](Screenshots/search.JPG)           | Search through journal entries |
 
 ---
 
