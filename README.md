@@ -1,8 +1,8 @@
-## JournalProject
+# JournalProject
 📝 Journal Diary – Digital Journal Web App
 Journal Diary is a clean and simple digital journal web application designed for users to write, manage, and reflect on their daily thoughts or memories. With a focus on minimalism and functionality, this project provides features like secure login, daily entry tracking, and keyword-based search — all packed in a user-friendly dashboard.
 
-# 🔍 Key Features
+## 🔍 Key Features
 ✍️ Add Journal Entries – Write and save personal thoughts with timestamps.
 
 🔐 User Authentication – Register and log in securely.
@@ -13,7 +13,7 @@ Journal Diary is a clean and simple digital journal web application designed for
 
 📲 Clean UI/UX – Built with simplicity and ease of use in mind.
 
-# 📌 Built With
+## 📌 Built With
 Frontend: HTML, CSS, JavaScript (or React if applicable)
 Backend: Django (or Node.js, Flask, etc., if you're using another stack)
 Design: Figma prototypes
